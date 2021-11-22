@@ -23,40 +23,6 @@ import {
   Alert,
 } from 'react-native';
 
-function loginAction({navigation}){
-    auth()
-      .signInWithEmailAndPassword('akhzar@gmail.com', '123456')
-      .then(userCredentials => {
-        //var user = userCredentials.user;
-        Alert.alert('User Logged In');
-        console.log('User signed in!');
-        navigation.navigate('DashboardScreen')
-      })
-      .catch(error => {
-        Alert.alert('User Not Found');
-        console.error('this is error ', error);
-      });
-
-    // const userName = props.userName;
-    // const password = props.password;
-  
-  }
-
-function guestUserAction() {
-
-    auth()
-      .signInAnonymously()
-      .then((userCredentials) => {
-        var user = userCredentials.user;
-        console.log('User signed in anonymously', user);
-      })
-      .catch(error => {
-        if (error.code === 'auth/operation-not-allowed') {
-          console.log('Enable anonymous in your firebase console.');
-        }
-        console.error(error);
-      });
-  }
 
 function HomeScreen1({ navigation }) {
   const [userName, setUserName] = useState('');
@@ -90,7 +56,7 @@ function HomeScreen1({ navigation }) {
           onChangeText={username => setUserName(username)}
           placeholder="USER NAME"
           placeholderTextColor="white"
-          style={{width: 275}}
+          style={{width: 275, color:'white'}}
         />
       </View>
       <View
@@ -112,7 +78,8 @@ function HomeScreen1({ navigation }) {
           onChangeText={password => setPassword(password)}
           placeholder="PASSWORD"
           placeholderTextColor="white"
-          style={{ width: 275 }}
+          style={{ width: 275, color: 'white' }}
+          secureTextEntry={true}
         />
       </View>
       <View
@@ -129,15 +96,28 @@ function HomeScreen1({ navigation }) {
       <TouchableOpacity
         style={{
           alignItems: 'center',
-          backgroundColor: "#df1247",
+          backgroundColor: "#FFCA3C",
           width: 300,
           height: 50,
           marginLeft: 55,
           justifyContent: "center",
           marginBottom: 10,
           borderRadius: 90,
-        }} onPress={() => {loginAction()}}>
-        <Text style={{ color: 'white', fontWeight: "bold" }}>LOG IN</Text>
+        }} onPress={() => {
+          auth()
+            .signInWithEmailAndPassword(userName, password)
+            .then(userCredentials => {
+              //var user = userCredentials.user;
+              Alert.alert('User Logged In');
+              console.log('User signed in!');
+              navigation.navigate('DashboardScreen');
+            })
+            .catch(error => {
+              Alert.alert('User Not Found');
+              console.error('this is error ', error);
+            });
+        }}>
+        <Text style={{ fontWeight: "bold" }}>LOG IN</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -159,7 +139,21 @@ function HomeScreen1({ navigation }) {
           marginBottom: 50,
         }}>
         <TouchableOpacity
-          onPress={() => { guestUserAction() }}>
+          onPress={() => { 
+            auth()
+              .signInAnonymously()
+              .then((userCredentials) => {
+                var user = userCredentials.user;
+                console.log('User signed in anonymously', user);
+                navigation.navigate('DashboardScreen');
+              })
+              .catch(error => {
+                if (error.code === 'auth/operation-not-allowed') {
+                  console.log('Enable anonymous in your firebase console.');
+                }
+                console.error(error);
+              });
+          }}>
           <Text style={{ color: 'white' }}>ANONYMOUS SIGN IN</Text>
         </TouchableOpacity>
       </View>
@@ -409,7 +403,12 @@ const Tab = createBottomTabNavigator();
 
 function DashboardScreen({route, navigation}) {
   return (    
-    <Tab.Navigator tabBarOptions={{showLabel: false}}>
+    <Tab.Navigator tabBarOptions={{
+      showLabel: false, activeTintColor: 'grey', 
+      inactiveTintColor: 'lightgray',
+      activeBackgroundColor: '#7070A8',
+      inactiveBackgroundColor: '#7070A8',
+      }}>
           <Tab.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, tabBarIcon:({focused})=>(
             <View style={{justifyContent:'center', alignItems:'center'}}>
               <Image
@@ -418,11 +417,11 @@ function DashboardScreen({route, navigation}) {
                 style={{
                   width:25,
                   height:25,
-                  tintColor: focused ? '#df1247' : 'black',
+                  tintColor: focused ? '#FFCA3C' : 'black',
                 }}
               />
               <Text style={{
-                color: focused ? '#df1247' : 'black', fontSize:12
+                color: focused ? '#FFCA3C' : 'black', fontSize:12
               }}>HOME</Text>
             </View>
           )}}/>
@@ -435,11 +434,11 @@ function DashboardScreen({route, navigation}) {
               style={{
                 width: 25,
                 height: 25,
-                tintColor: focused ? '#df1247' : 'black',
+                tintColor: focused ? '#FFCA3C' : 'black',
               }}
             />
             <Text style={{
-              color: focused ? '#df1247' : 'black', fontSize: 12
+              color: focused ? '#FFCA3C' : 'black', fontSize: 12
             }}>SETTINGS</Text>
           </View>
         )}}/>
@@ -452,11 +451,11 @@ function DashboardScreen({route, navigation}) {
               style={{
                 width: 25,
                 height: 25,
-                tintColor: focused ? '#df1247' : 'black',
+                tintColor: focused ? '#FFCA3C' : 'black',
               }}
             />
             <Text style={{
-              color: focused ? '#df1247' : 'black', fontSize: 12
+              color: focused ? '#FFCA3C' : 'black', fontSize: 12
             }}>INFO</Text>
           </View>
         ) }} />
@@ -469,11 +468,11 @@ function DashboardScreen({route, navigation}) {
               style={{
                 width: 25,
                 height: 25,
-                tintColor: focused ? '#df1247' : 'black',
+                tintColor: focused ? '#FFCA3C' : 'black',
               }}
             />
             <Text style={{
-              color: focused ? '#df1247' : 'black', fontSize: 12
+              color: focused ? '#FFCA3C' : 'black', fontSize: 12
             }}>USER</Text>
           </View>
         ) }} />
